@@ -1,0 +1,1 @@
+export const APPLICATION_DRAWER_WIDTH = 240;
