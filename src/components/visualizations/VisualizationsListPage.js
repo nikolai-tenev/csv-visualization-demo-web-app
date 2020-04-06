@@ -10,9 +10,9 @@ import {observer} from "mobx-react";
 import UserLayout from "../shared/UserLayout";
 import {withStyles} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import {Add, Delete, Edit} from "@material-ui/icons";
+import {Add, Check, Clear, Delete, Edit, Visibility} from "@material-ui/icons";
 import {Link} from "react-router-dom";
-import {DATASETS_CREATE_PAGE_URL, DATASETS_EDIT_PAGE_URL} from "../../configs/application-urls";
+import {VISUALIZATIONS_CREATE_PAGE_URL, VISUALIZATIONS_EDIT_PAGE_URL, VISUALIZATIONS_VIEW_PAGE_URL} from "../../configs/application-urls";
 import Button from "@material-ui/core/Button";
 import {applicationContext} from "../../services/ApplicationContext";
 import TablePagination from "@material-ui/core/TablePagination";
@@ -24,12 +24,12 @@ const css = (theme) => ({
     }
 });
 
-const service = applicationContext.datasetsService;
+const service = applicationContext.visualizationsService;
 const uiService = applicationContext.uiService;
 
 @withStyles(css)
 @observer
-class DatasetsListPage extends Component {
+class VisualizationsListPage extends Component {
     componentDidMount() {
         service.loadList();
     }
@@ -45,16 +45,16 @@ class DatasetsListPage extends Component {
                     color="primary"
                     startIcon={<Add/>}
                     component={Link}
-                    to={DATASETS_CREATE_PAGE_URL}
+                    to={VISUALIZATIONS_CREATE_PAGE_URL}
                 >
                     Add new
                 </Button>
                 <TableContainer>
-                    <Table aria-label="Datasets list">
+                    <Table aria-label="Visualizations list">
                         <TableHead>
                             <TableRow>
                                 <TableCell>Name</TableCell>
-                                <TableCell align="right">Rows</TableCell>
+                                <TableCell align="right">On dashboard?</TableCell>
                                 <TableCell align="right">Created at</TableCell>
                                 <TableCell align="right">Modified at</TableCell>
                                 <TableCell align="center">Actions</TableCell>
@@ -68,20 +68,30 @@ class DatasetsListPage extends Component {
                                     <TableCell component="th" scope="row">
                                         {row.name}
                                     </TableCell>
-                                    <TableCell align="right">{row.rows}</TableCell>
+                                    <TableCell align="right">{row.showOnDashboard ? <Check/> : <Clear/>}</TableCell>
                                     <TableCell align="right">{new Date(row.createdAt).toLocaleDateString()}</TableCell>
                                     <TableCell align="right">{new Date(row.modifiedAt).toLocaleDateString()}</TableCell>
                                     <TableCell align="center">
                                         <IconButton
                                             component={Link}
-                                            to={DATASETS_EDIT_PAGE_URL.replace(":id", row.id)}
+                                            to={VISUALIZATIONS_VIEW_PAGE_URL.replace(":id", row.id)}
+                                            aria-label="view"
+                                            title="View"
+                                        >
+                                            <Visibility/>
+                                        </IconButton>
+                                        <IconButton
+                                            component={Link}
+                                            to={VISUALIZATIONS_EDIT_PAGE_URL.replace(":id", row.id)}
                                             aria-label="edit"
+                                            title="Edit"
                                             color="primary">
                                             <Edit/>
                                         </IconButton>
                                         <IconButton
-                                            onClick={() => this.handleDatasetDeleteClick(row.id)}
+                                            onClick={() => this.handleVisualizationDeleteClick(row.id)}
                                             aria-label="delete"
+                                            title="Delete"
                                             color="secondary">
                                             <Delete/>
                                         </IconButton>
@@ -104,7 +114,7 @@ class DatasetsListPage extends Component {
         </UserLayout>;
     }
 
-    handleDatasetDeleteClick = async (id) => {
+    handleVisualizationDeleteClick = async (id) => {
         try {
             await service.delete(id);
             uiService.showSuccessSnackbar({message: "Record successfully deleted!"});
@@ -127,4 +137,4 @@ class DatasetsListPage extends Component {
     };
 }
 
-export default DatasetsListPage;
+export default VisualizationsListPage;

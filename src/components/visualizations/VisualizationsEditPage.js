@@ -4,10 +4,10 @@ import UserLayout from "../shared/UserLayout";
 import {withStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
-import DatasetsForm from "./DatasetsForm";
+import VisualizationsForm from "./VisualizationsForm";
 import {applicationContext} from "../../services/ApplicationContext";
 import {withRouter} from "react-router-dom";
-import {DATASETS_PAGE_URL} from "../../configs/application-urls";
+import {VISUALIZATIONS_PAGE_URL} from "../../configs/application-urls";
 
 const css = (theme) => ({
     paper: {
@@ -23,19 +23,19 @@ const css = (theme) => ({
     }
 });
 
-const service = applicationContext.datasetsService;
+const service = applicationContext.visualizationsService;
 const uiService = applicationContext.uiService;
 
 @withStyles(css)
 @withRouter
 @observer
-class DatasetsEditPage extends Component {
+class VisualizationsEditPage extends Component {
     componentDidMount() {
         if (this.props.match && this.props.match.params && this.props.match.params.id) {
             const id = this.props.match.params.id;
             service.loadSingle(id);
         } else {
-            this.props.history.push(DATASETS_PAGE_URL);
+            this.props.history.push(VISUALIZATIONS_PAGE_URL);
         }
     }
 
@@ -45,10 +45,21 @@ class DatasetsEditPage extends Component {
         return <UserLayout>
             <Paper className={classes.paper}>
                 <Typography component="h1" variant="h4" align="center" gutterBottom>
-                    Dataset "{service.single.name}"
+                    Visualization "{service.single.name}"
                 </Typography>
-                <DatasetsForm
-                    values={service.single}
+                <VisualizationsForm
+                    initialValues={{
+                        name: "",
+                        dataset: "",
+                        showOnDashboard: false,
+                        xAxis: "",
+                        yAxis: "",
+                        xAxisAggregateSum: false,
+                        yAxisAggregateSum: false,
+                        xAxisAggregateAvg: false,
+                        yAxisAggregateAvg: false,
+                        ...service.single
+                    }}
                     handleSubmit={this.handleSubmit}
                 />
             </Paper>
@@ -68,4 +79,4 @@ class DatasetsEditPage extends Component {
     };
 }
 
-export default DatasetsEditPage;
+export default VisualizationsEditPage;

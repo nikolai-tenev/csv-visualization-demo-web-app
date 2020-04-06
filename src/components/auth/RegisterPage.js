@@ -5,13 +5,14 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import {Link as RouterLink} from "react-router-dom";
+import {Link as RouterLink, useHistory} from "react-router-dom";
 import Link from "@material-ui/core/Link";
-import {LOGIN_PAGE_URL} from "../../configs/application-urls";
+import {LOGIN_PAGE_URL, REGISTER_THANK_YOU_PAGE_URL} from "../../configs/application-urls";
 import GuestLayout from "../shared/GuestLayout";
 import {Field, Form, Formik} from "formik";
 import {USER_REGISTRATION} from "../../configs/validation-schemas";
 import {TextField} from "formik-material-ui";
+import {applicationContext} from "../../services/ApplicationContext";
 
 
 const css = makeStyles((theme) => ({
@@ -28,24 +29,38 @@ const css = makeStyles((theme) => ({
     },
 }));
 
+const service = applicationContext.applicationService;
+const uiService = applicationContext.uiService;
+
 export default () => {
     const classes = css();
+    const history = useHistory();
 
     return <GuestLayout>
         <Avatar className={classes.avatar}>
             <LockOutlinedIcon/>
         </Avatar>
         <Typography component="h1" variant="h5">
-            Sign up
+            Register
         </Typography>
         <Formik
             initialValues={{email: '', password: '', firstName: '', lastName: '', confirmPassword: ''}}
             validationSchema={USER_REGISTRATION}
-            onSubmit={(values, {setSubmitting}) => {
-                setTimeout(() => {
-                    alert(JSON.stringify(values, null, 2));
+            enableReinitialize={true}
+            validateOnBlur={false}
+            onSubmit={async (values, {setSubmitting}) => {
+                try {
+                    await service.register(values);
                     setSubmitting(false);
-                }, 400);
+                    history.push(REGISTER_THANK_YOU_PAGE_URL);
+                } catch (e) {
+                    setSubmitting(false);
+                    uiService.showErrorSnackbar({
+                        message: "There was an error while trying to create a new user. Error: " + e.message
+                    });
+
+                    console.error(e);
+                }
             }}
         >
             {({isSubmitting}) => (

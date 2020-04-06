@@ -11,12 +11,12 @@ import Drawer from "@material-ui/core/Drawer";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import Container from "@material-ui/core/Container";
-import {ChevronLeft, Dashboard as DashboardIcon, ExitToApp, Menu} from "@material-ui/icons";
+import {ChevronLeft, Dashboard as DashboardIcon, ExitToApp, Menu, ShowChart, Storage} from "@material-ui/icons";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import {Link} from "react-router-dom";
-import {DASHBOARD_PAGE_URL, DATASETS_PAGE_URL, LOGIN_PAGE_URL, REGISTER_PAGE_URL} from "../../configs/application-urls";
+import {Link, withRouter} from "react-router-dom";
+import {DASHBOARD_PAGE_URL, DATASETS_PAGE_URL, LOGIN_PAGE_URL, VISUALIZATIONS_PAGE_URL} from "../../configs/application-urls";
 import {observer} from "mobx-react";
 import Avatar from "@material-ui/core/Avatar";
 import {Copyright} from "./Copyright";
@@ -25,6 +25,7 @@ import Box from "@material-ui/core/Box";
 const css = (theme) => ({
     root: {
         display: 'flex',
+        minHeight: '100vh',
     },
     toolbar: {
         paddingRight: 24,
@@ -85,16 +86,20 @@ const css = (theme) => ({
     },
     appBarSpacer: theme.mixins.toolbar,
     content: {
-        flexGrow: 1,
-        height: '100vh',
-        overflow: 'auto',
+        display: "flex",
+        width: "100%"
     },
     container: {
         paddingTop: theme.spacing(4),
         paddingBottom: theme.spacing(4),
+        display: "flex",
+        flexDirection: "column",
     },
 });
 
+const service = applicationContext.applicationService;
+
+@withRouter
 @withStyles(css)
 @observer
 class UserLayout extends Component {
@@ -104,25 +109,7 @@ class UserLayout extends Component {
 
 
         return <div className={classes.root}>
-            <AppBar className={clsx(classes.appBar, uiService.drawerOpen && classes.appBarShift)}>
-                <Toolbar className={classes.toolbar}>
-                    <IconButton
-                        edge="start"
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={this.handleDrawerOpen}
-                        className={clsx(classes.menuButton, uiService.drawerOpen && classes.menuButtonHidden)}
-                    >
-                        <Menu/>
-                    </IconButton>
-                    <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        Dashboard
-                    </Typography>
-                    <IconButton color="inherit" onClick={this.handleLogoutClick}>
-                        <ExitToApp/>
-                    </IconButton>
-                </Toolbar>
-            </AppBar>
+
             <Drawer
                 variant="permanent"
                 classes={{
@@ -146,27 +133,40 @@ class UserLayout extends Component {
                     </ListItem>
                     <ListItem button component={Link} to={DATASETS_PAGE_URL}>
                         <ListItemIcon>
-                            <DashboardIcon/>
+                            <Storage/>
                         </ListItemIcon>
                         <ListItemText primary="Datasets"/>
                     </ListItem>
-                    <ListItem button component={Link} to={LOGIN_PAGE_URL}>
+                    <ListItem button component={Link} to={VISUALIZATIONS_PAGE_URL}>
                         <ListItemIcon>
-                            <DashboardIcon/>
+                            <ShowChart/>
                         </ListItemIcon>
-                        <ListItemText primary="Login"/>
-                    </ListItem>
-                    <ListItem button component={Link} to={REGISTER_PAGE_URL}>
-                        <ListItemIcon>
-                            <DashboardIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary="Register"/>
+                        <ListItemText primary="Visualizations"/>
                     </ListItem>
                 </List>
             </Drawer>
             <main className={classes.content}>
-                <div className={classes.appBarSpacer}/>
-                <Container maxWidth="lg" className={classes.container}>
+                <AppBar className={clsx(classes.appBar, uiService.drawerOpen && classes.appBarShift)}>
+                    <Toolbar className={classes.toolbar}>
+                        <IconButton
+                            edge="start"
+                            color="inherit"
+                            aria-label="open drawer"
+                            onClick={this.handleDrawerOpen}
+                            className={clsx(classes.menuButton, uiService.drawerOpen && classes.menuButtonHidden)}
+                        >
+                            <Menu/>
+                        </IconButton>
+                        <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+                            Dashboard
+                        </Typography>
+                        <IconButton color="inherit" onClick={this.handleLogoutClick}>
+                            <ExitToApp/>
+                        </IconButton>
+                    </Toolbar>
+                </AppBar>
+                <Container className={classes.container}>
+                    <div className={classes.appBarSpacer}/>
                     {this.props.children}
                     <Box pt={4}>
                         <Copyright/>
@@ -185,6 +185,8 @@ class UserLayout extends Component {
     };
 
     handleLogoutClick = () => {
+        service.logout();
+        this.props.history.push(LOGIN_PAGE_URL);
     };
 }
 
