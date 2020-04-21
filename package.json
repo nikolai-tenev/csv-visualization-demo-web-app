@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Demo web application for CSV upload and visualization.",
+  "license": "UNLICENSED",
   "main": "index.js",
   "dependencies": {
     "@material-ui/core": "^4.9.8",
