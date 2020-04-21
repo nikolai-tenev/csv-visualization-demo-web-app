@@ -1,8 +1,8 @@
 {
-  "name": "il-interview-web-app",
+  "name": "csv-visualization-demo-web-app",
   "version": "0.1.0",
   "private": true,
-  "description": "Front end code for a code interview evaluation task.",
+  "description": "Demo web application for CSV upload and visualization.",
   "main": "index.js",
   "dependencies": {
     "@material-ui/core": "^4.9.8",

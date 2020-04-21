@@ -118,7 +118,7 @@ class UserLayout extends Component {
                 open={uiService.drawerOpen}
             >
                 <div className={classes.toolbarIcon}>
-                    <Avatar className={classes.toolbarLogo} alt="Corona Analytics" src="/android-chrome-512x512.png"/>
+                    <Avatar className={classes.toolbarLogo} alt="CSV Analytics" src="/android-chrome-512x512.png"/>
                     <IconButton onClick={this.handleDrawerClose}>
                         <ChevronLeft/>
                     </IconButton>

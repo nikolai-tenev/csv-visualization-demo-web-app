@@ -9,8 +9,8 @@ configure({
 });
 
 localforage.config({
-    name: "il_interview_app",
-    storeName: "il_interview_app_store"
+    name: "csv_visualization_demo_app",
+    storeName: "csv_visualization_demo_app_store"
 });
 
 
